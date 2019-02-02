@@ -8,6 +8,7 @@ static void show_menu();
 static void handle_user_input();
 static void flush_stdin();
 static void create_new_notebook();
+static void quit_creating_new_notebook(char* error_string, char* buffer);
 static void show_all_notebooks();
 static void show_all_entries();
 static void create_new_entry();
@@ -41,12 +42,16 @@ void start_application() {
 
 static void show_menu() {
 	printf(" Welcome to the Simple Console Notebook!\n");
+
 	if (strcmp(current_notebook.to_text, "") != 0)
 		printf(" Current Notebook: %s\n", current_notebook.to_text);
 	printf("+------------------------------------------------------+\n");
+
+	// Prints the menu
 	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES; ++menu_entry) {
 		printf("\t%s\n", menu_entries[menu_entry]);
 	}
+
 	printf("\nYour choice: ");
 }
 
@@ -90,34 +95,29 @@ static void create_new_notebook() {
 	unsigned buffer_size = 2048;
 	char* buffer = malloc(buffer_size);
 	if (buffer == NULL) {
-		fprintf(stderr,
-				"Error: Couldn't allocate memory for buffer!\nPress [ENTER] to return to menu.\n\n");
-		flush_stdin();
-		getchar();
+		quit_creating_new_notebook("Error: Couldn't allocate memory for buffer!\nPress [ENTER] to return to menu.\n\n", buffer);
 		return;
 	}
 
 	// Get the notebook name from the user
 	printf("Enter notebook name: ");
 	if (!fgets(buffer, buffer_size, stdin)) {
-		fprintf(stderr,
-				"Error: Couldn't get input!\nPress [ENTER] to return to menu\n\n");
-		free(buffer);
-		flush_stdin();
-		getchar();
+		quit_creating_new_notebook("Error: Couldn't get input!\nPress [ENTER] to return to menu\n\n", buffer);
 		return;
 	}
 
 	flush_stdin();
 
+	// Checking if user entered anything for the notebook name
+	if (strcmp(buffer, "") == 0) {
+		quit_creating_new_notebook("Error: Notebook name must not be empty.\nPress [ENTER] to return to menu\n\n", buffer);
+		return;
+	}
+
 	// closing current opened notebook
 	if (current_notebook.fstream != NULL) {
 		if (fclose(current_notebook.fstream) != 0) {
-			fprintf(stderr,
-					"Error: Couldn't close file stream of the current opened notebook\nPress [ENTER] to return to menu.\n\n");
-			free(buffer);
-			flush_stdin();
-			getchar();
+			quit_creating_new_notebook("Error: Couldn't close file stream of the current opened notebook\nPress [ENTER] to return to menu.\n\n", buffer);
 			return;
 		}
 	}
@@ -125,11 +125,7 @@ static void create_new_notebook() {
 	// Store the notebook name in a file
 	FILE* f_notebooks = fopen("notebooks_list", "a");
 	if (f_notebooks == NULL) {
-		fprintf(stderr,
-				"Error while opening notebooks_list!\nPress [ENTER] to return to menu.\n\n");
-		free(buffer);
-		flush_stdin();
-		getchar();
+		quit_creating_new_notebook("Error while opening notebooks_list!\nPress [ENTER] to return to menu.\n\n", buffer);
 		return;
 	}
 	fprintf(f_notebooks, "%s\n", buffer);
@@ -142,10 +138,17 @@ static void create_new_notebook() {
 	current_notebook.fstream = fopen(buffer, "w");
 	free(buffer);
 
-	// Finishing the process with a succes message
+	// Finishing the process with a success message
 	printf(
 			"[*]SUCCESS: Notebook %s created!\nPress [ENTER] to return to menu ...",
 			current_notebook.to_text);
+	flush_stdin();
+	getchar();
+}
+
+static void quit_creating_new_notebook(char* error_string, char* buffer) {
+	fprintf(stderr, error_string);
+	free(buffer);
 	flush_stdin();
 	getchar();
 }
