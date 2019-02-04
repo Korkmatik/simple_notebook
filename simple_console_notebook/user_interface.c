@@ -133,7 +133,7 @@ static void create_new_notebook() {
 	}
 
 	// check if the given notebook name already exists
-	FILE* f_notebooks = fopen("notebooks_list", "rb");
+	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
 	if (f_notebooks != NULL) {
 		size_t check_buffer_size = 1024;
 		char* check_buffer = malloc(check_buffer_size);
@@ -151,7 +151,7 @@ static void create_new_notebook() {
 			fclose(f_notebooks);
 	}
 
-	f_notebooks = fopen("notebooks_list", "ab");
+	f_notebooks = fopen(NOTEBOOKS_LIST, "ab");
 
 	if (f_notebooks == NULL) {
 		quit_creating_new_notebook("Error while opening notebooks_list!", buffer, NULL, NULL);
