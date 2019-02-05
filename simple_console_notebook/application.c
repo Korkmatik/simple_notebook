@@ -1,4 +1,4 @@
-#include "user_interface.h"
+#include "application.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +10,7 @@ static void show_menu();
 static void handle_user_input();
 static void flush_stdin();
 static void create_new_notebook();
-static void quit_creating_new_notebook(char* error_string, char* buffer,
+static void quit_submenu_with_error(char* error_string, char* buffer,
 		char* check_buffer, FILE** fstream);
 static void show_all_notebooks();
 static int print_existing_notebooks();
@@ -21,9 +21,8 @@ static void show_all_entries();
 static void create_new_entry();
 static void quit();
 
-// The menu
-
-static enum order_menu_entries {
+// The men
+enum order_menu_entries {
 	NEW_NOTEBOOK = 1,
 	SHOW_NOTEBOOKS,
 	OPEN_NOTEBOOK,
@@ -72,8 +71,6 @@ static void handle_user_input() {
 	char user_choice;
 	scanf("%c", &user_choice);
 
-	//flush_stdin();
-
 	switch (user_choice - '0') {
 	case NEW_NOTEBOOK:
 		create_new_notebook();
@@ -111,7 +108,7 @@ static void create_new_notebook() {
 	unsigned buffer_size = 2048;
 	char* buffer = malloc(buffer_size);
 	if (buffer == NULL) {
-		quit_creating_new_notebook(
+		quit_submenu_with_error(
 				"Error: Couldn't allocate memory for buffer!", buffer, NULL,
 				NULL);
 		return;
@@ -124,7 +121,7 @@ static void create_new_notebook() {
 	printf("Enter notebook name: ");
 	char* retVal = fgets(buffer, buffer_size, stdin);
 	if (retVal == NULL) {
-		quit_creating_new_notebook("Error: Couldn't get input!", buffer, NULL,
+		quit_submenu_with_error("Error: Couldn't get input!", buffer, NULL,
 				NULL);
 		return;
 	}
@@ -135,7 +132,7 @@ static void create_new_notebook() {
 
 	// Checking if user entered anything for the notebook name
 	if (strcmp(buffer, "") == 0) {
-		quit_creating_new_notebook("Error: Notebook name must not be empty.",
+		quit_submenu_with_error("Error: Notebook name must not be empty.",
 				buffer, NULL, NULL);
 		return;
 	}
@@ -143,7 +140,7 @@ static void create_new_notebook() {
 	// closing current opened notebook
 	if (current_notebook.fstream != NULL) {
 		if (fclose(current_notebook.fstream) != 0) {
-			quit_creating_new_notebook(
+			quit_submenu_with_error(
 					"Error: Couldn't close file stream of the current opened notebook.",
 					buffer, NULL, NULL);
 			return;
@@ -161,7 +158,7 @@ static void create_new_notebook() {
 			strlen_check_buffer = strlen(check_buffer);
 			check_buffer[strlen_check_buffer - 1] = '\0';
 			if (strcmp(buffer, check_buffer) == 0) {
-				quit_creating_new_notebook("Error: Notebook already exists!",
+				quit_submenu_with_error("Error: Notebook already exists!",
 						buffer, check_buffer, &f_notebooks);
 				return;
 			}
@@ -173,7 +170,7 @@ static void create_new_notebook() {
 	f_notebooks = fopen(NOTEBOOKS_LIST, "ab");
 
 	if (f_notebooks == NULL) {
-		quit_creating_new_notebook("Error while opening notebooks_list!",
+		quit_submenu_with_error("Error while opening notebooks_list!",
 				buffer, NULL, NULL);
 		return;
 	}
@@ -196,7 +193,7 @@ static void create_new_notebook() {
 	getchar();
 }
 
-static void quit_creating_new_notebook(char* error_string, char* buffer,
+static void quit_submenu_with_error(char* error_string, char* buffer,
 		char* check_buffer, FILE** fstream) {
 	fprintf(stderr, "%s\nPress [ENTER] to return to menu.\n\n", error_string);
 	if (buffer != NULL)

@@ -1,4 +1,4 @@
-#include "user_interface.h"
+#include "application.h"
 
 int main(int argc, char **argv) {
 	start_application();
