@@ -12,21 +12,21 @@ static void flush_stdin();
 static void create_new_notebook();
 static void quit_creating_new_notebook(char* error_string, char* buffer, char* check_buffer, FILE** fstream);
 static void show_all_notebooks();
+static void open_notebook();
 static void quit_show_all_notebooks(char* error_string, FILE** fstream, char* buffer);
 static void show_all_entries();
 static void create_new_entry();
 static void quit();
 
 // The menu
-#define NUMBER_MENU_ENTRIES 5
 
 static enum order_menu_entries {
-	NEW_NOTEBOOK = 1, SHOW_NOTEBOOKS, SHOW_ALL_ENTRIES, CREATE_NEW_ENTRY, QUIT
+	NEW_NOTEBOOK = 1, SHOW_NOTEBOOKS, OPEN_NOTEBOOK, SHOW_ALL_ENTRIES, CREATE_NEW_ENTRY, QUIT, NUMBER_MENU_ENTRIES
 };
 
-static char* menu_entries[NUMBER_MENU_ENTRIES] = { "1 - Create a new notebook",
-		"2 - Show all notebooks", "3 - Show all entries in current notebook",
-		"4 - Create new entry", "5 - Quit" };
+static char* menu_entries[] = { "Create a new notebook",
+		"Show all notebooks", "Open an existing notebook", "Show all entries in current notebook",
+		"Create new entry", "Quit" };
 
 // Storing informations about the current opened notebook
 typedef struct _current_notebook {
@@ -51,8 +51,8 @@ static void show_menu() {
 	printf("+------------------------------------------------------+\n");
 
 	// Prints the menu
-	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES; ++menu_entry) {
-		printf("\t%s\n", menu_entries[menu_entry]);
+	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES - 1; ++menu_entry) {
+		printf("%d - \t%s\n", menu_entry + 1, menu_entries[menu_entry]);
 	}
 
 	printf("\nYour choice: ");
@@ -70,6 +70,9 @@ static void handle_user_input() {
 		break;
 	case SHOW_NOTEBOOKS:
 		show_all_notebooks();
+		break;
+	case OPEN_NOTEBOOK:
+		open_notebook();
 		break;
 	case SHOW_ALL_ENTRIES:
 		show_all_entries();
@@ -220,6 +223,10 @@ static void show_all_notebooks() {
 	printf("Press any key to return to menu\n");
 	flush_stdin();
 	getchar();
+}
+
+static void open_notebook() {
+
 }
 
 static void quit_show_all_notebooks(char* error_string, FILE** fstream, char* buffer) {
