@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define NOTEBOOKS_LIST "notebooks_list"
 
@@ -18,6 +19,7 @@ static void quit_show_all_notebooks(char* error_string, FILE** fstream,
 		char* buffer);
 static void open_notebook();
 static void show_all_entries();
+static bool is_notebook_opened();
 static void create_new_entry();
 static void quit();
 
@@ -195,13 +197,15 @@ static void create_new_notebook() {
 
 static void quit_submenu_with_error(char* error_string, char* buffer,
 		char* check_buffer, FILE** fstream) {
-	fprintf(stderr, "%s\nPress [ENTER] to return to menu.\n\n", error_string);
+	fprintf(stderr, "\n%s\nPress [ENTER] to return to menu.\n\n", error_string);
 	if (buffer != NULL)
 		free(buffer);
 	if (check_buffer != NULL)
 		free(check_buffer);
 	if (fstream != NULL)
 		fclose(*fstream);
+
+	flush_stdin();
 	getchar();
 }
 
@@ -305,7 +309,7 @@ static void open_notebook() {
 	if (current_notebook.fstream != NULL)
 		fclose(current_notebook.fstream);
 
-	current_notebook.fstream = fopen(buffer, "wb");
+	current_notebook.fstream = fopen(buffer, "rb");
 	if (current_notebook.fstream == NULL) {
 		quit_show_all_notebooks("Could not open the specified notebook", NULL, buffer);
 		return;
@@ -318,7 +322,41 @@ static void open_notebook() {
 }
 
 static void show_all_entries() {
+	if (!is_notebook_opened()) {
+		current_notebook.fstream = fopen(current_notebook.to_text, "rb");
+		if (current_notebook.fstream == NULL) {
+			quit_submenu_with_error("No notebook opened yet. Please open a notebook first", NULL, NULL, NULL);
+			return;
+		}
+	} else {
+		current_notebook.fstream = freopen(current_notebook.to_text, "rb", current_notebook.fstream);
+	}
 
+	// Buffer for storing a note
+	size_t buffer_size = 4096;
+	char* buffer = malloc(buffer_size);
+	unsigned line = 0;
+
+	// Printing note stored so far
+	printf("\nYour notes in %s:\n"
+		   "----------------------------------\n", current_notebook.to_text);
+	while((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
+		printf("Note #%2d: %s", ++line, buffer);
+
+	if(0 == line)
+		printf("Sorry, no notes stored so far\n");
+
+	printf("\nPress [ENTER] to return to menu");
+	free(buffer);
+	flush_stdin();
+	getchar();
+}
+
+static bool is_notebook_opened() {
+	if (current_notebook.fstream == NULL)
+		return false;
+	else
+		return true;
 }
 
 static void create_new_entry() {
