@@ -120,7 +120,7 @@ static void create_new_notebook() {
 	flush_stdin();
 
 	// Get the notebook name from the user
-	printf("Enter notebook name: ");
+	printf("\nEnter notebook name: ");
 	char* retVal = fgets(buffer, buffer_size, stdin);
 	if (retVal == NULL) {
 		quit_submenu_with_error("Error: Couldn't get input!", buffer, NULL,
@@ -239,7 +239,7 @@ static int print_existing_notebooks() {
 
 	// Read notebook names and print them on console
 	int number_notebooks = 0;
-	printf("NR    NOTEBOOK NAME\n"
+	printf("\nNR    NOTEBOOK NAME\n"
 			"--------------------------------------\n");
 	while ((getline(&buffer, &buffer_size, f_notebooks)) != -1)
 		printf("%d - %s", ++number_notebooks, buffer);
@@ -364,7 +364,7 @@ static void create_new_entry() {
 }
 
 static void quit() {
-	printf("GOODBYE!");
+	printf("GOODBYE!\n");
 
 	// Closing if there is an opened notebook
 	if (current_notebook.fstream != NULL)
