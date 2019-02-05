@@ -12,6 +12,7 @@ static void flush_stdin();
 static void create_new_notebook();
 static void quit_creating_new_notebook(char* error_string, char* buffer, char* check_buffer, FILE** fstream);
 static void show_all_notebooks();
+static int print_existing_notebooks();
 static void open_notebook();
 static void quit_show_all_notebooks(char* error_string, FILE** fstream, char* buffer);
 static void show_all_entries();
@@ -84,7 +85,7 @@ static void handle_user_input() {
 		quit();
 		break;
 	default:
-		printf("Sorry no such menu entry.\n\n");
+		printf("Sorry, no such menu entry.\n\n");
 		getchar();
 		break;
 	}
@@ -191,11 +192,19 @@ static void quit_creating_new_notebook(char* error_string, char* buffer, char* c
 }
 
 static void show_all_notebooks() {
+	print_existing_notebooks();
+
+	printf("Press any key to return to menu\n");
+	flush_stdin();
+	getchar();
+}
+
+static int print_existing_notebooks() {
 	// Opens the file where the notebooks are stored
 	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
 	if(f_notebooks == NULL) {
 		quit_show_all_notebooks("Could not open 'notebooks list'", &f_notebooks, NULL);
-		return;
+		return -1;
 	}
 
 	/* Reading and printing all notebooks*/
@@ -205,27 +214,27 @@ static void show_all_notebooks() {
 	char* buffer = malloc(buffer_size);
 	if(buffer == NULL) {
 		quit_show_all_notebooks("Could not allocate memory for buffer.", &f_notebooks, NULL);
-		return;
+		return -1;
 	}
 
 	// Read notebook names and print them on console
-	int line = 0;
+	int number_notebooks = 0;
 	printf("NR    NOTEBOOK NAME\n"
 		   "--------------------------------------\n");
 	while((getline(&buffer, &buffer_size, f_notebooks)) != -1)
-		printf("%d - %s", ++line, buffer);
+		printf("%d - %s", ++number_notebooks, buffer);
 
 	printf("\n");
 
-	if(line <= 0)
-		printf("Sorry, no notebooks stored so far.\n");
+	if(number_notebooks <= 0)
+	printf("Sorry, no notebooks stored so far.\n");
 
-	printf("Press any key to return to menu\n");
-	flush_stdin();
-	getchar();
+	return number_notebooks;
 }
 
 static void open_notebook() {
+	// Prints all existing notebooks
+	int number_notebooks = print_existing_notebooks();
 
 }
 
