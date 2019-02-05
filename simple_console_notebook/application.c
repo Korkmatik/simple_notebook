@@ -21,7 +21,7 @@ static void show_all_entries();
 static bool is_notebook_opened();
 static void create_new_entry();
 static void delete_note();
-static void quit();
+_Noreturn static void quit();
 
 // The menu
 enum order_menu_entries {
@@ -64,8 +64,9 @@ static void show_menu() {
 	// Prints the menu
 	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES - 1;
 			++menu_entry) {
-		printf("%d - \t%s\n", menu_entry + 1, menu_entries[menu_entry]);
+		printf(" %d - %s\n", menu_entry + 1, menu_entries[menu_entry]);
 	}
+	printf("+------------------------------------------------------+\n");
 
 	printf("\nYour choice: ");
 }
@@ -196,13 +197,14 @@ static void create_new_notebook() {
 
 	// Finishing the process with a success message
 	printf(
-			"SUCCESS: Notebook %s created!\nPress [ENTER] to return to menu ...\n",
+			"\nSUCCESS: Notebook %s created!\nPress [ENTER] to return to menu ...\n",
 			current_notebook.to_text);
 }
 
 static void quit_submenu_with_error(char* error_string, char* buffer,
 		char* check_buffer, FILE** fstream) {
 	fprintf(stderr, "\n%s\nPress [ENTER] to return to menu.\n\n", error_string);
+
 	if (buffer != NULL)
 		free(buffer);
 	if (check_buffer != NULL)
@@ -403,7 +405,7 @@ static void create_new_entry() {
 		return;
 	}
 
-	// Storing the note in the notebook
+	// Storing thshow_menue note in the notebook
 	if (fprintf(current_notebook.fstream, "%s", buffer) < 0) {
 		quit_submenu_with_error("Could not write into notebook", buffer, NULL,
 				NULL);
@@ -412,7 +414,7 @@ static void create_new_entry() {
 	fflush(current_notebook.fstream);
 	free(buffer);
 
-	printf("SUCCESS: Note was stored in %s\n"
+	printf("\nSUCCESS: Note was stored in %s\n"
 			"Press [ENTER] to return to menu\n", current_notebook.to_text);
 
 	getchar();
@@ -422,7 +424,7 @@ static void delete_note() {
 
 }
 
-static void quit() {
+_Noreturn static void quit() {
 	printf("GOODBYE!\n");
 
 	// Closing if there is an opened notebook
