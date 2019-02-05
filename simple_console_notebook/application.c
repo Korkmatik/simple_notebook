@@ -11,13 +11,15 @@ static void show_menu();
 static void handle_user_input();
 static void flush_stdin();
 static void create_new_notebook();
-static void quit_submenu_with_error(char* error_string, char* buffer, char* check_buffer, FILE** fstream);
+static void quit_submenu_with_error(char* error_string, char* buffer,
+		char* check_buffer, FILE** fstream);
 static void show_all_notebooks();
 static int print_existing_notebooks();
 static void quit_show_all_notebooks(char* error_string, FILE** fstream,
 		char* buffer);
 static void open_notebook();
-static void show_all_entries();
+static void show_notes_menu();
+static void print_all_notes();
 static bool is_notebook_opened();
 static void create_new_entry();
 static void delete_note();
@@ -39,7 +41,7 @@ static char* menu_entries[] = { "Create a new notebook", "Show all notebooks",
 		"Open an existing notebook", "Show all notes in current notebook",
 		"Create new note", "Delete note", "Quit" };
 
-// Storing informations about the current opened notebook
+// Stores informations about the current opened notebook
 typedef struct _current_notebook {
 	char to_text[2048];
 	FILE* fstream;
@@ -86,7 +88,7 @@ static void handle_user_input() {
 		open_notebook();
 		break;
 	case SHOW_ALL_NOTES:
-		show_all_entries();
+		show_notes_menu();
 		break;
 	case CREATE_NEW_NOTE:
 		create_new_entry();
@@ -329,37 +331,42 @@ static void open_notebook() {
 			buffer);
 }
 
-static void show_all_entries() {
-	if (!is_notebook_opened()) {
-		current_notebook.fstream = fopen(current_notebook.to_text, "rb");
-		if (current_notebook.fstream == NULL) {
-			quit_submenu_with_error(
-					"No notebook opened yet. Please open a notebook first.",
-					NULL, NULL, NULL);
-			return;
-		}
-	} else {
-		current_notebook.fstream = freopen(current_notebook.to_text, "rb",
-				current_notebook.fstream);
-	}
-
-	// Buffer for storing a note
-	size_t buffer_size = 4096;
-	char* buffer = malloc(buffer_size);
-	unsigned line = 0;
-
-	// Printing note stored so far
-	printf("\nYour notes in %s:\n"
-			"----------------------------------\n", current_notebook.to_text);
-	while ((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
-		printf("Note #%2d: %s", ++line, buffer);
-
-	if (0 == line)
-		printf("Sorry, no notes stored so far\n");
+static void show_notes_menu() {
+	print_all_notes();
 
 	printf("\nPress [ENTER] to return to menu");
-	free(buffer);
 	flush_stdin();
+}
+
+static void print_all_notes() {
+	if (!is_notebook_opened()) {
+			current_notebook.fstream = fopen(current_notebook.to_text, "rb");
+			if (current_notebook.fstream == NULL) {
+				quit_submenu_with_error(
+						"No notebook opened yet. Please open a notebook first.",
+						NULL, NULL, NULL);
+				return;
+			}
+		} else {
+			current_notebook.fstream = freopen(current_notebook.to_text, "rb",
+					current_notebook.fstream);
+		}
+
+		// Buffer for storing a note
+		size_t buffer_size = 4096;
+		char* buffer = malloc(buffer_size);
+		unsigned line = 0;
+
+		// Printing note stored so far
+		printf("\nYour notes in %s:\n"
+				"----------------------------------\n", current_notebook.to_text);
+		while ((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
+			printf("Note #%2d: %s", ++line, buffer);
+
+		if (0 == line)
+			printf("Sorry, no notes stored so far\n");
+
+		free(buffer);
 }
 
 static bool is_notebook_opened() {
@@ -401,14 +408,14 @@ static void create_new_entry() {
 
 	if (strlen(buffer) == 0) {
 		quit_submenu_with_error("You haven't entered anything", buffer, NULL,
-				NULL);
+		NULL);
 		return;
 	}
 
 	// Storing thshow_menue note in the notebook
 	if (fprintf(current_notebook.fstream, "%s", buffer) < 0) {
 		quit_submenu_with_error("Could not write into notebook", buffer, NULL,
-				NULL);
+		NULL);
 		return;
 	}
 	fflush(current_notebook.fstream);
@@ -421,6 +428,12 @@ static void create_new_entry() {
 }
 
 static void delete_note() {
+	printf("Do you want to show all notes first?(y/n)");
+	char user_choice = getchar();
+	printf("\n");
+	if (user_choice == 'y' || user_choice == 'Y')
+		show_notes_menu();
+
 
 }
 
