@@ -10,11 +10,13 @@ static void show_menu();
 static void handle_user_input();
 static void flush_stdin();
 static void create_new_notebook();
-static void quit_creating_new_notebook(char* error_string, char* buffer, char* check_buffer, FILE** fstream);
+static void quit_creating_new_notebook(char* error_string, char* buffer,
+		char* check_buffer, FILE** fstream);
 static void show_all_notebooks();
 static int print_existing_notebooks();
+static void quit_show_all_notebooks(char* error_string, FILE** fstream,
+		char* buffer);
 static void open_notebook();
-static void quit_show_all_notebooks(char* error_string, FILE** fstream, char* buffer);
 static void show_all_entries();
 static void create_new_entry();
 static void quit();
@@ -22,11 +24,17 @@ static void quit();
 // The menu
 
 static enum order_menu_entries {
-	NEW_NOTEBOOK = 1, SHOW_NOTEBOOKS, OPEN_NOTEBOOK, SHOW_ALL_ENTRIES, CREATE_NEW_ENTRY, QUIT, NUMBER_MENU_ENTRIES
+	NEW_NOTEBOOK = 1,
+	SHOW_NOTEBOOKS,
+	OPEN_NOTEBOOK,
+	SHOW_ALL_ENTRIES,
+	CREATE_NEW_ENTRY,
+	QUIT,
+	NUMBER_MENU_ENTRIES
 };
 
-static char* menu_entries[] = { "Create a new notebook",
-		"Show all notebooks", "Open an existing notebook", "Show all entries in current notebook",
+static char* menu_entries[] = { "Create a new notebook", "Show all notebooks",
+		"Open an existing notebook", "Show all entries in current notebook",
 		"Create new entry", "Quit" };
 
 // Storing informations about the current opened notebook
@@ -52,7 +60,8 @@ static void show_menu() {
 	printf("+------------------------------------------------------+\n");
 
 	// Prints the menu
-	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES - 1; ++menu_entry) {
+	for (int menu_entry = 0; menu_entry < NUMBER_MENU_ENTRIES - 1;
+			++menu_entry) {
 		printf("%d - \t%s\n", menu_entry + 1, menu_entries[menu_entry]);
 	}
 
@@ -102,7 +111,9 @@ static void create_new_notebook() {
 	unsigned buffer_size = 2048;
 	char* buffer = malloc(buffer_size);
 	if (buffer == NULL) {
-		quit_creating_new_notebook("Error: Couldn't allocate memory for buffer!", buffer, NULL, NULL);
+		quit_creating_new_notebook(
+				"Error: Couldn't allocate memory for buffer!", buffer, NULL,
+				NULL);
 		return;
 	}
 
@@ -113,7 +124,8 @@ static void create_new_notebook() {
 	printf("Enter notebook name: ");
 	char* retVal = fgets(buffer, buffer_size, stdin);
 	if (retVal == NULL) {
-		quit_creating_new_notebook("Error: Couldn't get input!", buffer, NULL, NULL);
+		quit_creating_new_notebook("Error: Couldn't get input!", buffer, NULL,
+				NULL);
 		return;
 	}
 
@@ -121,17 +133,19 @@ static void create_new_notebook() {
 	int new_line_pos = strlen(buffer) - 1;
 	buffer[new_line_pos] = '\0';
 
-
 	// Checking if user entered anything for the notebook name
 	if (strcmp(buffer, "") == 0) {
-		quit_creating_new_notebook("Error: Notebook name must not be empty.", buffer, NULL, NULL);
+		quit_creating_new_notebook("Error: Notebook name must not be empty.",
+				buffer, NULL, NULL);
 		return;
 	}
 
 	// closing current opened notebook
 	if (current_notebook.fstream != NULL) {
 		if (fclose(current_notebook.fstream) != 0) {
-			quit_creating_new_notebook("Error: Couldn't close file stream of the current opened notebook.", buffer, NULL, NULL);
+			quit_creating_new_notebook(
+					"Error: Couldn't close file stream of the current opened notebook.",
+					buffer, NULL, NULL);
 			return;
 		}
 	}
@@ -142,23 +156,25 @@ static void create_new_notebook() {
 		size_t check_buffer_size = 1024;
 		char* check_buffer = malloc(check_buffer_size);
 		int strlen_check_buffer = 0;
-		while((getline(&check_buffer, &check_buffer_size, f_notebooks)) != -1) {
+		while ((getline(&check_buffer, &check_buffer_size, f_notebooks)) != -1) {
 			// New line character has to be removed because in the text file the notebook name is stored with a new line
 			strlen_check_buffer = strlen(check_buffer);
 			check_buffer[strlen_check_buffer - 1] = '\0';
 			if (strcmp(buffer, check_buffer) == 0) {
-				quit_creating_new_notebook("Error: Notebook already exists!", buffer, check_buffer, &f_notebooks);
+				quit_creating_new_notebook("Error: Notebook already exists!",
+						buffer, check_buffer, &f_notebooks);
 				return;
 			}
 		}
-			free(check_buffer);
-			fclose(f_notebooks);
+		free(check_buffer);
+		fclose(f_notebooks);
 	}
 
 	f_notebooks = fopen(NOTEBOOKS_LIST, "ab");
 
 	if (f_notebooks == NULL) {
-		quit_creating_new_notebook("Error while opening notebooks_list!", buffer, NULL, NULL);
+		quit_creating_new_notebook("Error while opening notebooks_list!",
+				buffer, NULL, NULL);
 		return;
 	}
 
@@ -180,7 +196,8 @@ static void create_new_notebook() {
 	getchar();
 }
 
-static void quit_creating_new_notebook(char* error_string, char* buffer, char* check_buffer, FILE** fstream) {
+static void quit_creating_new_notebook(char* error_string, char* buffer,
+		char* check_buffer, FILE** fstream) {
 	fprintf(stderr, "%s\nPress [ENTER] to return to menu.\n\n", error_string);
 	if (buffer != NULL)
 		free(buffer);
@@ -202,8 +219,9 @@ static void show_all_notebooks() {
 static int print_existing_notebooks() {
 	// Opens the file where the notebooks are stored
 	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
-	if(f_notebooks == NULL) {
-		quit_show_all_notebooks("Could not open 'notebooks list'", &f_notebooks, NULL);
+	if (f_notebooks == NULL) {
+		quit_show_all_notebooks("Could not open 'notebooks list'", &f_notebooks,
+				NULL);
 		return -1;
 	}
 
@@ -212,37 +230,94 @@ static int print_existing_notebooks() {
 	// Allocating memory to store notebook names
 	size_t buffer_size = 2048;
 	char* buffer = malloc(buffer_size);
-	if(buffer == NULL) {
-		quit_show_all_notebooks("Could not allocate memory for buffer.", &f_notebooks, NULL);
+	if (buffer == NULL) {
+		quit_show_all_notebooks("Could not allocate memory for buffer.",
+				&f_notebooks, NULL);
 		return -1;
 	}
 
 	// Read notebook names and print them on console
 	int number_notebooks = 0;
 	printf("NR    NOTEBOOK NAME\n"
-		   "--------------------------------------\n");
-	while((getline(&buffer, &buffer_size, f_notebooks)) != -1)
+			"--------------------------------------\n");
+	while ((getline(&buffer, &buffer_size, f_notebooks)) != -1)
 		printf("%d - %s", ++number_notebooks, buffer);
+
+	fclose(f_notebooks);
 
 	printf("\n");
 
-	if(number_notebooks <= 0)
-	printf("Sorry, no notebooks stored so far.\n");
+	if (number_notebooks <= 0)
+		printf("Sorry, no notebooks stored so far.\n");
+
+	printf("\n");
 
 	return number_notebooks;
+}
+
+static void quit_show_all_notebooks(char* error_string, FILE** fstream,
+		char* buffer) {
+	fprintf(stderr, "Error: %s\nPress [ENTER] to return to menu.\n\n",
+			error_string);
+
+	if (fstream != NULL)
+		fclose(*fstream);
+
+	if (buffer != NULL)
+		free(buffer);
 }
 
 static void open_notebook() {
 	// Prints all existing notebooks
 	int number_notebooks = print_existing_notebooks();
 
-}
+	// Get user's choice
+	printf("Enter the number of the Notebook: ");
+	flush_stdin();
+	char user_choice = getchar();
+	flush_stdin();
+	int number_chosen_notebook = user_choice - '0' - 1;
+	if (number_chosen_notebook < 0 || number_chosen_notebook > number_notebooks) {
+		quit_show_all_notebooks("No such notebook", NULL, NULL);
+		return;
+	}
 
-static void quit_show_all_notebooks(char* error_string, FILE** fstream, char* buffer) {
-	fprintf(stderr, "Error: %s\nPress [ENTER] to return to menu.\n\n", error_string);
-	fclose(*fstream);
-	if(buffer != NULL)
-		free(buffer);
+	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
+	if (f_notebooks == NULL) {
+		quit_show_all_notebooks("Could not open f_notebooks", &f_notebooks,
+				NULL);
+		return;
+	}
+
+	// Reading the chosen notebook as string
+	size_t buffer_size = 2048;
+	char* buffer = malloc(buffer_size);
+	unsigned current_line = 0;
+	while (current_line <= number_chosen_notebook) {
+		getline(&buffer, &buffer_size, f_notebooks);
+		current_line++;
+	}
+
+	// Deleting new line character from buffer
+	int str_size_buffer = strlen(buffer);
+	buffer[str_size_buffer -1] = '\0';
+
+	fclose(f_notebooks);
+
+	// Open the user specified notebook
+	if (current_notebook.fstream != NULL)
+		fclose(current_notebook.fstream);
+
+	current_notebook.fstream = fopen(buffer, "wb");
+	if (current_notebook.fstream == NULL) {
+		quit_show_all_notebooks("Could not open the specified notebook", NULL, buffer);
+		return;
+	}
+	strcpy(current_notebook.to_text, buffer);
+	free(buffer);
+
+	printf("\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n", buffer);
+	getchar();
 }
 
 static void show_all_entries() {
