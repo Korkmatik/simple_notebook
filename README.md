@@ -7,5 +7,6 @@ Just compile and run the executable on the console. The menu will guide you trou
 
 # What I've learned
 - Handling files in C
-- Working with Eclipse: The Git-Plugin, Debugging, Shortcuts
+- Refactoring
+- Working with Eclipse: The Git-Plugin, Debugging, Shortcuts, Tools for Refactoring
 - Improved working with Git and GitHub in Terminal
