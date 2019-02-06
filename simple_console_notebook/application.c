@@ -11,12 +11,10 @@ static void show_menu();
 static void handle_user_input();
 static void flush_stdin();
 static void create_new_notebook();
-static void quit_submenu_with_error(char* error_string, char* buffer,
-		char* check_buffer, FILE** fstream);
+static void quit_submenu_with_error(char*, char*, char*, FILE**);
 static void show_all_notebooks();
 static int print_existing_notebooks();
-static void quit_show_all_notebooks(char* error_string, FILE** fstream,
-		char* buffer);
+static void quit_show_all_notebooks(char*, FILE**, char*);
 static void open_notebook();
 static void show_notes_menu();
 static int print_all_notes();
@@ -340,35 +338,35 @@ static void show_notes_menu() {
 
 static int print_all_notes() {
 	if (!is_notebook_opened()) {
-			current_notebook.fstream = fopen(current_notebook.to_text, "rb");
-			if (current_notebook.fstream == NULL) {
-				quit_submenu_with_error(
-						"No notebook opened yet. Please open a notebook first.",
-						NULL, NULL, NULL);
-				return -1;
-			}
-		} else {
-			current_notebook.fstream = freopen(current_notebook.to_text, "rb",
-					current_notebook.fstream);
+		current_notebook.fstream = fopen(current_notebook.to_text, "rb");
+		if (current_notebook.fstream == NULL) {
+			quit_submenu_with_error(
+					"No notebook opened yet. Please open a notebook first.",
+					NULL, NULL, NULL);
+			return -1;
 		}
+	} else {
+		current_notebook.fstream = freopen(current_notebook.to_text, "rb",
+				current_notebook.fstream);
+	}
 
-		// Buffer for storing a note
-		size_t buffer_size = 4096;
-		char* buffer = malloc(buffer_size);
-		unsigned line = 0;
+	// Buffer for storing a note
+	size_t buffer_size = 4096;
+	char* buffer = malloc(buffer_size);
+	unsigned line = 0;
 
-		// Printing note stored so far
-		printf("\nYour notes in %s:\n"
-				"----------------------------------\n", current_notebook.to_text);
-		while ((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
-			printf("Note #%2d: %s", ++line, buffer);
+	// Printing note stored so far
+	printf("\nYour notes in %s:\n"
+			"----------------------------------\n", current_notebook.to_text);
+	while ((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
+		printf("Note #%2d: %s", ++line, buffer);
 
-		if (0 == line)
-			printf("Sorry, no notes stored so far\n");
+	if (0 == line)
+		printf("Sorry, no notes stored so far\n");
 
-		free(buffer);
+	free(buffer);
 
-		return line;
+	return line;
 }
 
 static bool is_notebook_opened() {
@@ -436,7 +434,8 @@ static void delete_note() {
 		return;
 
 	flush_stdin();
-	printf("\nWhich note do you want to delete? Enter the number of the note: ");
+	printf(
+			"\nWhich note do you want to delete? Enter the number of the note: ");
 	char user_choice = getchar();
 	int delete_line = user_choice - '0' - 1; // Transforming the char into an integer
 
@@ -449,7 +448,9 @@ static void delete_note() {
 	//Allocating memory for the name of the temporary file
 	char* temp_filename = malloc(strlen(current_notebook.to_text) + 5);
 	if (temp_filename == NULL) {
-		quit_submenu_with_error("Error: Could not allocate memory for temp_buffer", NULL, NULL, NULL);
+		quit_submenu_with_error(
+				"Error: Could not allocate memory for temp_buffer", NULL, NULL,
+				NULL);
 		return;
 	}
 	strcpy(temp_filename, current_notebook.to_text);
@@ -457,14 +458,18 @@ static void delete_note() {
 
 	FILE* temp_file = fopen(temp_filename, "wb");
 	if (temp_file == NULL) {
-		quit_submenu_with_error("Error: Could not create temp_file", temp_filename, NULL, &temp_file);
+		quit_submenu_with_error("Error: Could not create temp_file",
+				temp_filename, NULL, &temp_file);
 		return;
 	}
 
-	current_notebook.fstream = freopen(current_notebook.to_text, "rb", current_notebook.fstream);
+	current_notebook.fstream = freopen(current_notebook.to_text, "rb",
+			current_notebook.fstream);
 
 	if (current_notebook.fstream == NULL) {
-		quit_submenu_with_error("Error: Could not reopen current_notebook.fstream!", temp_filename, NULL, &temp_file);
+		quit_submenu_with_error(
+				"Error: Could not reopen current_notebook.fstream!",
+				temp_filename, NULL, &temp_file);
 		return;
 	}
 
@@ -473,12 +478,14 @@ static void delete_note() {
 	size_t buffer_size = 2048;
 	char* line_buffer = malloc(buffer_size);
 	if (line_buffer == NULL) {
-		quit_submenu_with_error("Error: Could not allocate memory for line_buffer", temp_filename, NULL, &temp_file);
+		quit_submenu_with_error(
+				"Error: Could not allocate memory for line_buffer",
+				temp_filename, NULL, &temp_file);
 		return;
 	}
 
 	// Write all notes which won't be deleted into the temporary file
-	while(getline(&line_buffer, &buffer_size, current_notebook.fstream) != -1) {
+	while (getline(&line_buffer, &buffer_size, current_notebook.fstream) != -1) {
 		if (current_line != delete_line)
 			fprintf(temp_file, "%s", line_buffer);
 		current_line++;
@@ -495,7 +502,8 @@ static void delete_note() {
 
 	current_notebook.fstream = fopen(current_notebook.to_text, "rb");
 	if (current_notebook.fstream == NULL) {
-		quit_submenu_with_error("Error while trying to reopen current notebook", NULL, NULL, NULL);
+		quit_submenu_with_error("Error while trying to reopen current notebook",
+				NULL, NULL, NULL);
 		strcpy(current_notebook.to_text, "");
 		return;
 	}
