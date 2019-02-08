@@ -1,8 +1,10 @@
 #include "application.h"
-#include "Console.h"
 #include "Notebook_specifics.h"
 #include "Menu.h"
 #include "NewNotebookDialog.h"
+#include "ShowAllNotebooksDialog.h"
+
+#include "Console.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,9 +12,7 @@
 #include <stdbool.h>
 
 static void handle_user_input();
-static void show_all_notebooks();
-static int print_existing_notebooks();
-static void quit_show_all_notebooks(char*, FILE**, char*);
+
 static void open_notebook();
 static void show_notes_menu();
 static int print_all_notes();
@@ -66,64 +66,6 @@ void handle_user_input() {
 	flush_stdin();
 }
 
-static void show_all_notebooks() {
-	print_existing_notebooks();
-
-	printf("Press any key to return to menu\n");
-	flush_stdin();
-}
-
-static int print_existing_notebooks() {
-	// Opens the file where the notebooks are stored
-	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
-	if (f_notebooks == NULL) {
-		quit_show_all_notebooks("Could not open 'notebooks list'", &f_notebooks,
-		NULL);
-		return -1;
-	}
-
-	/* Reading and printing all notebooks*/
-
-	// Allocating memory to store notebook names
-	size_t buffer_size = 2048;
-	char* buffer = malloc(buffer_size);
-	if (buffer == NULL) {
-		quit_show_all_notebooks("Could not allocate memory for buffer.",
-				&f_notebooks, NULL);
-		return -1;
-	}
-
-	// Read notebook names and print them on console
-	int number_notebooks = 0;
-	printf("\nNR    NOTEBOOK NAME\n"
-			"--------------------------------------\n");
-	while ((fgets(buffer, buffer_size, f_notebooks)) != NULL)
-		printf("%d - %s", ++number_notebooks, buffer);
-
-	fclose(f_notebooks);
-
-	printf("\n");
-
-	if (number_notebooks <= 0)
-		printf("Sorry, no notebooks stored so far.\n");
-
-	printf("\n");
-
-	return number_notebooks;
-}
-
-static void quit_show_all_notebooks(char* error_string, FILE** fstream,
-		char* buffer) {
-	fprintf(stderr, "Error: %s\nPress [ENTER] to return to menu.\n\n",
-			error_string);
-
-	if (fstream != NULL)
-		fclose(*fstream);
-
-	if (buffer != NULL)
-		free(buffer);
-}
-
 static void open_notebook() {
 	// Prints all existing notebooks
 	int number_notebooks = print_existing_notebooks();
@@ -136,14 +78,13 @@ static void open_notebook() {
 	int number_chosen_notebook = user_choice - '0' - 1;
 	if (number_chosen_notebook < 0
 			|| number_chosen_notebook > number_notebooks) {
-		quit_show_all_notebooks("No such notebook", NULL, NULL);
+		quit_submenu_with_error("No such notebook", NULL, NULL, NULL);
 		return;
 	}
 
 	FILE* f_notebooks = fopen(NOTEBOOKS_LIST, "rb");
 	if (f_notebooks == NULL) {
-		quit_show_all_notebooks("Could not open f_notebooks", &f_notebooks,
-		NULL);
+		quit_submenu_with_error("Could not open f_notebooks", NULL, NULL, &f_notebooks);
 		return;
 	}
 
@@ -168,8 +109,7 @@ static void open_notebook() {
 
 	current_notebook.fstream = fopen(buffer, "rb");
 	if (current_notebook.fstream == NULL) {
-		quit_show_all_notebooks("Could not open the specified notebook", NULL,
-				buffer);
+		quit_submenu_with_error("Could not open the specified notebook", buffer, NULL, NULL);
 		return;
 	}
 	strcpy(current_notebook.to_text, buffer);

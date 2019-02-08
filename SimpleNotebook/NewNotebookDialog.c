@@ -21,8 +21,7 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	printf("\nEnter notebook name: ");
 	char* retVal = fgets(buffer, buffer_size, stdin);
 	if (retVal == NULL) {
-		quit_submenu_with_error("Error: Couldn't get input!", buffer, NULL,
-			NULL);
+		quit_submenu_with_error("Error: Couldn't get input!", buffer, NULL, NULL);
 		return;
 	}
 
