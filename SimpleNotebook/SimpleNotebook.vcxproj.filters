@@ -42,6 +42,9 @@
     <ClCompile Include="NewEntryDialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeleteNote.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="NewEntryDialog.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteNote.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
