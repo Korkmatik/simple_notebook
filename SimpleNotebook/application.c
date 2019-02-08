@@ -4,6 +4,7 @@
 #include "NewNotebookDialog.h"
 #include "ShowAllNotebooksDialog.h"
 #include "OpenNotebookDialog.h"
+#include "ShowNotesDialog.h"
 
 #include "Console.h"
 
@@ -13,10 +14,6 @@
 #include <stdbool.h>
 
 static void handle_user_input();
-
-static void show_notes_menu();
-static int print_all_notes();
-static bool is_notebook_opened();
 static void create_new_entry();
 static void delete_note();
 static void quit();
@@ -46,7 +43,7 @@ void handle_user_input() {
 		open_notebook(&current_notebook);
 		break;
 	case SHOW_ALL_NOTES:
-		show_notes_menu();
+		show_notes_menu(&current_notebook);
 		break;
 	case CREATE_NEW_NOTE:
 		create_new_entry();
@@ -64,49 +61,6 @@ void handle_user_input() {
 	}
 
 	flush_stdin();
-}
-
-static void show_notes_menu() {
-	print_all_notes();
-
-	printf("\nPress [ENTER] to return to menu");
-	flush_stdin();
-}
-
-static int print_all_notes() {
-	if (!is_notebook_opened()) {
-		current_notebook.fstream = fopen(current_notebook.to_text, "rb");
-		if (current_notebook.fstream == NULL) {
-			quit_submenu_with_error("No notebook opened yet. Please open a notebook first.", NULL, NULL, NULL);
-			return -1;
-		}
-	} else {
-		current_notebook.fstream = freopen(current_notebook.to_text, "rb",	current_notebook.fstream);
-	}
-
-	// Buffer for storing a note
-	size_t buffer_size = 4096;
-	char* buffer = malloc(buffer_size);
-	unsigned line = 0;
-
-	// Printing note stored so far
-	printf("\nYour notes in %s:\n----------------------------------\n", current_notebook.to_text);
-	while ((fgets(buffer, buffer_size, current_notebook.fstream)) != NULL)
-		printf("Note #%2d: %s", ++line, buffer);
-
-	if (0 == line)
-		printf("Sorry, no notes stored so far\n");
-
-	free(buffer);
-
-	return line;
-}
-
-static bool is_notebook_opened() {
-	if (current_notebook.fstream == NULL)
-		return false;
-	else
-		return true;
 }
 
 static void create_new_entry() {
@@ -155,7 +109,7 @@ static void create_new_entry() {
 
 static void delete_note() {
 	printf("\n");
-	int number_notes = print_all_notes();
+	int number_notes = print_all_notes(&current_notebook);
 	if (number_notes <= 0)
 		return;
 

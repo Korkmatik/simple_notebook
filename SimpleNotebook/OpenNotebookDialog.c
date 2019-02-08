@@ -55,7 +55,5 @@ void open_notebook(CURRENT_NOTEBOOK* current_notebook) {
 	strcpy(current_notebook->to_text, buffer);
 	free(buffer);
 
-	printf(
-		"\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n",
-		buffer);
+	printf("\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n", buffer);
 }

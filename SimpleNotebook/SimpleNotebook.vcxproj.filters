@@ -36,6 +36,9 @@
     <ClCompile Include="OpenNotebookDialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShowNotesDialog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="OpenNotebookDialog.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowNotesDialog.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

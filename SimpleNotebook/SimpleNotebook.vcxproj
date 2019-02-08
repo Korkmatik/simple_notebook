@@ -123,6 +123,7 @@
     <ClCompile Include="NewNotebookDialog.c" />
     <ClCompile Include="OpenNotebookDialog.c" />
     <ClCompile Include="ShowAllNotebooksDialog.c" />
+    <ClCompile Include="ShowNotesDialog.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
@@ -132,6 +133,7 @@
     <ClInclude Include="NewNotebookDialog.h" />
     <ClInclude Include="OpenNotebookDialog.h" />
     <ClInclude Include="ShowAllNotebooksDialog.h" />
+    <ClInclude Include="ShowNotesDialog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
