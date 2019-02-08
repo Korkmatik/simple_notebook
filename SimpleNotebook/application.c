@@ -1,4 +1,5 @@
 #include "application.h"
+#include "Console.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +10,6 @@
 
 static void show_menu();
 static void handle_user_input();
-static void flush_stdin();
 static void create_new_notebook();
 static void quit_submenu_with_error(char*, char*, char*, FILE**);
 static void show_all_notebooks();
@@ -21,7 +21,7 @@ static int print_all_notes();
 static bool is_notebook_opened();
 static void create_new_entry();
 static void delete_note();
-_Noreturn static void quit();
+static void quit();
 
 // The menu
 enum order_menu_entries {
@@ -45,7 +45,7 @@ typedef struct _current_notebook {
 	FILE* fstream;
 } CURRENT_NOTEBOOK;
 
-CURRENT_NOTEBOOK current_notebook = { };
+CURRENT_NOTEBOOK current_notebook;
 
 void start_application() {
 	while (1) {
@@ -54,7 +54,7 @@ void start_application() {
 	}
 }
 
-static void show_menu() {
+void show_menu() {
 	printf(" Welcome to the Simple Console Notebook!\n");
 
 	if (strcmp(current_notebook.to_text, "") != 0)
@@ -71,7 +71,7 @@ static void show_menu() {
 	printf("\nYour choice: ");
 }
 
-static void handle_user_input() {
+void handle_user_input() {
 	char user_choice;
 	scanf("%c", &user_choice);
 
@@ -104,12 +104,6 @@ static void handle_user_input() {
 	}
 
 	flush_stdin();
-}
-
-static void flush_stdin() {
-	int c;
-	while ((c = getchar()) != '\n' && c != EOF)
-		;
 }
 
 static void create_new_notebook() {
@@ -162,7 +156,7 @@ static void create_new_notebook() {
 		size_t check_buffer_size = 1024;
 		char* check_buffer = malloc(check_buffer_size);
 		int strlen_check_buffer = 0;
-		while ((getline(&check_buffer, &check_buffer_size, f_notebooks)) != -1) {
+		while ((fgets(check_buffer, check_buffer_size, f_notebooks)) != NULL) {
 			// New line character has to be removed because in the text file the notebook name is stored with a new line
 			strlen_check_buffer = strlen(check_buffer);
 			check_buffer[strlen_check_buffer - 1] = '\0';
@@ -246,7 +240,7 @@ static int print_existing_notebooks() {
 	int number_notebooks = 0;
 	printf("\nNR    NOTEBOOK NAME\n"
 			"--------------------------------------\n");
-	while ((getline(&buffer, &buffer_size, f_notebooks)) != -1)
+	while ((fgets(buffer, buffer_size, f_notebooks)) != NULL)
 		printf("%d - %s", ++number_notebooks, buffer);
 
 	fclose(f_notebooks);
@@ -299,9 +293,9 @@ static void open_notebook() {
 	// Reading the chosen notebook as string
 	size_t buffer_size = 2048;
 	char* buffer = malloc(buffer_size);
-	unsigned current_line = 0;
+	int current_line = 0;
 	while (current_line <= number_chosen_notebook) {
-		getline(&buffer, &buffer_size, f_notebooks);
+		fgets(buffer, buffer_size, f_notebooks);
 		current_line++;
 	}
 
@@ -358,7 +352,7 @@ static int print_all_notes() {
 	// Printing note stored so far
 	printf("\nYour notes in %s:\n"
 			"----------------------------------\n", current_notebook.to_text);
-	while ((getline(&buffer, &buffer_size, current_notebook.fstream)) != -1)
+	while ((fgets(buffer, buffer_size, current_notebook.fstream)) != NULL)
 		printf("Note #%2d: %s", ++line, buffer);
 
 	if (0 == line)
@@ -475,8 +469,8 @@ static void delete_note() {
 
 	// Allocate memory for the buffer which will hold the notes
 	int current_line = 0;
-	size_t buffer_size = 2048;
-	char* line_buffer = malloc(buffer_size);
+	size_t line_buffer_size = 2048;
+	char* line_buffer = malloc(line_buffer_size);
 	if (line_buffer == NULL) {
 		quit_submenu_with_error(
 				"Error: Could not allocate memory for line_buffer",
@@ -485,7 +479,7 @@ static void delete_note() {
 	}
 
 	// Write all notes which won't be deleted into the temporary file
-	while (getline(&line_buffer, &buffer_size, current_notebook.fstream) != -1) {
+	while (fgets(line_buffer, line_buffer_size, current_notebook.fstream) != NULL) {
 		if (current_line != delete_line)
 			fprintf(temp_file, "%s", line_buffer);
 		current_line++;
@@ -508,12 +502,12 @@ static void delete_note() {
 		return;
 	}
 
-	printf("SUCCESS: Note was deleted!\nPress [ENTER] to return to menu.");
+	printf("\nSUCCESS: Note was deleted!\nPress [ENTER] to return to menu.");
 	flush_stdin();
 	getchar();
 }
 
-_Noreturn static void quit() {
+static void quit() {
 	printf("GOODBYE!\n");
 
 	// Closing if there is an opened notebook
