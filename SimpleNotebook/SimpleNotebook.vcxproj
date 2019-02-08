@@ -120,12 +120,14 @@
     <ClCompile Include="Console.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Menu.c" />
+    <ClCompile Include="NewNotebookDialog.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="CurrentNotebook.h" />
+    <ClInclude Include="Notebook_specifics.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="NewNotebookDialog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

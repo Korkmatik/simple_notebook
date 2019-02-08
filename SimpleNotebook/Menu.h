@@ -1,7 +1,7 @@
 #ifndef _MENU_H
 #define _MENU_H
 
-#include "CurrentNotebook.h"
+#include "Notebook_specifics.h"
 
 // The menu
 enum order_menu_entries {
