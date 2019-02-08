@@ -7,7 +7,7 @@
 #include "OpenNotebookDialog.h"
 #include "ShowNotesDialog.h"
 #include "NewEntryDialog.h"
-#include "DeleteNote.h"
+#include "DeleteNoteDialog.h"
 
 #include <stdio.h>
 #include <stdlib.h>

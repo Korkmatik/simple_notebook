@@ -42,7 +42,7 @@
     <ClCompile Include="NewEntryDialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DeleteNote.c">
+    <ClCompile Include="DeleteNoteDialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,14 +68,14 @@
     <ClInclude Include="OpenNotebookDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShowNotesDialog.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="NewEntryDialog.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeleteNote.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="DeleteNoteDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShowNotesDialog.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -118,7 +118,7 @@
   <ItemGroup>
     <ClCompile Include="application.c" />
     <ClCompile Include="Console.c" />
-    <ClCompile Include="DeleteNote.c" />
+    <ClCompile Include="DeleteNoteDialog.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Menu.c" />
     <ClCompile Include="NewEntryDialog.c" />
@@ -130,7 +130,7 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="DeleteNote.h" />
+    <ClInclude Include="DeleteNoteDialog.h" />
     <ClInclude Include="NewEntryDialog.h" />
     <ClInclude Include="Notebook_specifics.h" />
     <ClInclude Include="Menu.h" />
