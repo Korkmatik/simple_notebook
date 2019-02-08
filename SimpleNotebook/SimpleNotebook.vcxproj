@@ -120,6 +120,7 @@
     <ClCompile Include="Console.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="Menu.c" />
+    <ClCompile Include="NewEntryDialog.c" />
     <ClCompile Include="NewNotebookDialog.c" />
     <ClCompile Include="OpenNotebookDialog.c" />
     <ClCompile Include="ShowAllNotebooksDialog.c" />
@@ -128,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="NewEntryDialog.h" />
     <ClInclude Include="Notebook_specifics.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="NewNotebookDialog.h" />

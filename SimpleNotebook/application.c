@@ -5,6 +5,7 @@
 #include "ShowAllNotebooksDialog.h"
 #include "OpenNotebookDialog.h"
 #include "ShowNotesDialog.h"
+#include "NewEntryDialog.h"
 
 #include "Console.h"
 
@@ -14,7 +15,7 @@
 #include <stdbool.h>
 
 static void handle_user_input();
-static void create_new_entry();
+
 static void delete_note();
 static void quit();
 
@@ -46,7 +47,7 @@ void handle_user_input() {
 		show_notes_menu(&current_notebook);
 		break;
 	case CREATE_NEW_NOTE:
-		create_new_entry();
+		create_new_entry(&current_notebook);
 		break;
 	case DELETE_NOTE:
 		delete_note();
@@ -61,50 +62,6 @@ void handle_user_input() {
 	}
 
 	flush_stdin();
-}
-
-static void create_new_entry() {
-	if (current_notebook.fstream == NULL) {
-		current_notebook.fstream = fopen(current_notebook.to_text, "ab");
-		if (current_notebook.fstream == NULL) {
-			quit_submenu_with_error("No notebook opened yet. Please open a notebook first.", NULL, NULL, NULL);
-			return;
-		}
-	} else {
-		current_notebook.fstream = freopen(current_notebook.to_text, "ab", current_notebook.fstream);
-		if (current_notebook.fstream == NULL) {
-			quit_submenu_with_error("Error could not open specified file in write mode", NULL, NULL, NULL);
-			return;
-		}
-	}
-
-	// Buffer for storing the user's note
-	int buffer_size = 4096;
-	char* buffer = malloc(buffer_size);
-
-	// Getting user's note
-	flush_stdin();
-	printf("Type your note. Press [ENTER] if you are finished.\n"
-			"--------------------------------------------------\n\n");
-	fgets(buffer, buffer_size, stdin);
-
-	if (strlen(buffer) == 0) {
-		quit_submenu_with_error("You haven't entered anything", buffer, NULL, NULL);
-		return;
-	}
-
-	// Storing thshow_menue note in the notebook
-	if (fprintf(current_notebook.fstream, "%s", buffer) < 0) {
-		quit_submenu_with_error("Could not write into notebook", buffer, NULL, NULL);
-		return;
-	}
-	fflush(current_notebook.fstream);
-	free(buffer);
-
-	printf("\nSUCCESS: Note was stored in %s\n"
-			"Press [ENTER] to return to menu\n", current_notebook.to_text);
-
-	getchar();
 }
 
 static void delete_note() {
