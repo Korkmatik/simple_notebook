@@ -19,6 +19,8 @@
 static void load_notebook(CURRENT_NOTEBOOK *current_notebook);
 static void handle_user_input(CURRENT_NOTEBOOK *current_notebook);
 static void quit(CURRENT_NOTEBOOK *current_notebook);
+static void save_current_notebook(CURRENT_NOTEBOOK *current_notebook);
+static void close_current_notebook(CURRENT_NOTEBOOK *current_notebook);
 
 
 void start_application() {
@@ -83,18 +85,24 @@ void handle_user_input(CURRENT_NOTEBOOK *current_notebook) {
 
 static void quit(CURRENT_NOTEBOOK* current_notebook) {
 	printf("GOODBYE!\n");
+	save_current_notebook(current_notebook);
+	close_current_notebook(current_notebook);
+	exit(0);
+}
 
-	if (current_notebook->fstream != NULL) {
+static void save_current_notebook(CURRENT_NOTEBOOK * current_notebook) {
+	if (current_notebook->fstream == NULL)
+		return;
+
 		FILE* last_notebook = fopen(LAST_NOTEBOOK_SAVE, "wb");
-		if (last_notebook != NULL) {
-			fwrite(current_notebook, sizeof(CURRENT_NOTEBOOK), 1, last_notebook);
-			fclose(last_notebook);
-		}		
-	}
+		if (last_notebook == NULL)
+			return;
 
-	// Closing if there is an opened notebook
+		fwrite(current_notebook, sizeof(CURRENT_NOTEBOOK), 1, last_notebook);
+		fclose(last_notebook);
+}
+
+static void close_current_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	if (current_notebook->fstream != NULL)
 		fclose(current_notebook->fstream);
-
-	exit(0);
 }
