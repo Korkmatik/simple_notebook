@@ -11,7 +11,7 @@ void show_notes_menu(CURRENT_NOTEBOOK *current_notebook){
 	if (print_all_notes(current_notebook) == -1)
 		return;
 
-	printf("\nPress [ENTER] to return to menu");
+	printf("\nPress [ENTER] to return to menu\n");
 	flush_stdin();
 }
 

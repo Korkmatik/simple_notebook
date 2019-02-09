@@ -9,8 +9,11 @@
 void delete_note(CURRENT_NOTEBOOK * current_notebook) {
 	printf("\n");
 	int number_notes = print_all_notes(current_notebook);
-	if (number_notes <= 0)
+	if (number_notes <= 0) {
+		printf("\nPress [ENTER] to return to menu\n");
+		getchar();
 		return;
+	}
 
 	flush_stdin();
 	printf("\nWhich note do you want to delete? Enter the number of the note: ");
@@ -81,5 +84,4 @@ void delete_note(CURRENT_NOTEBOOK * current_notebook) {
 
 	printf("\nSUCCESS: Note was deleted!\nPress [ENTER] to return to menu.");
 	flush_stdin();
-	getchar();
 }

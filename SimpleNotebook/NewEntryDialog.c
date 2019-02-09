@@ -46,6 +46,4 @@ void create_new_entry(CURRENT_NOTEBOOK* current_notebook) {
 	free(buffer);
 
 	printf("\nSUCCESS: Note was stored in %s\nPress [ENTER] to return to menu\n", current_notebook->to_text);
-
-	getchar();
 }

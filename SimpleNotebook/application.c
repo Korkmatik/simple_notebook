@@ -76,7 +76,6 @@ void handle_user_input(CURRENT_NOTEBOOK *current_notebook) {
 		break;
 	default:
 		printf("Sorry, no such menu entry.\n\n");
-		getchar();
 		break;
 	}
 
