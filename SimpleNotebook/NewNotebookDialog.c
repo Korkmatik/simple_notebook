@@ -8,9 +8,7 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	unsigned buffer_size = 2048;
 	char* buffer = (char*)malloc(buffer_size);
 	if (buffer == NULL) {
-		quit_submenu_with_error("Error: Couldn't allocate memory for buffer!",
-			buffer, NULL,
-			NULL);
+		quit_submenu_with_error("Error: Couldn't allocate memory for buffer!", buffer, NULL, NULL);
 		return;
 	}
 
@@ -39,9 +37,7 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	// closing current opened notebook
 	if (current_notebook->fstream != NULL) {
 		if (fclose(current_notebook->fstream) != 0) {
-			quit_submenu_with_error(
-				"Error: Couldn't close file stream of the current opened notebook.",
-				buffer, NULL, NULL);
+			quit_submenu_with_error("Error: Couldn't close file stream of the current opened notebook.", buffer, NULL, NULL);
 			return;
 		}
 	}
@@ -57,8 +53,7 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 			strlen_check_buffer = strlen(check_buffer);
 			check_buffer[strlen_check_buffer - 1] = '\0';
 			if (strcmp(buffer, check_buffer) == 0) {
-				quit_submenu_with_error("Error: Notebook already exists!",
-					buffer, check_buffer, &f_notebooks);
+				quit_submenu_with_error("Error: Notebook already exists!", buffer, check_buffer, &f_notebooks);
 				return;
 			}
 		}
@@ -69,8 +64,7 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	f_notebooks = fopen(NOTEBOOKS_LIST, "ab");
 
 	if (f_notebooks == NULL) {
-		quit_submenu_with_error("Error while opening notebooks_list!", buffer,
-			NULL, NULL);
+		quit_submenu_with_error("Error while opening notebooks_list!", buffer, NULL, NULL);
 		return;
 	}
 
@@ -86,7 +80,5 @@ void create_new_notebook(CURRENT_NOTEBOOK * current_notebook) {
 	free(buffer);
 
 	// Finishing the process with a success message
-	printf(
-		"\nSUCCESS: Notebook %s created!\nPress [ENTER] to return to menu ...\n",
-		current_notebook->to_text);
+	printf("\nSUCCESS: Notebook %s created!\nPress [ENTER] to return to menu ...\n", current_notebook->to_text);
 }

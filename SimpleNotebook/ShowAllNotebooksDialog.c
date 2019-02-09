@@ -12,6 +12,7 @@ void show_all_notebooks() {
 
 	printf("Press any key to return to menu\n");
 	flush_stdin();
+	getchar();
 }
 
 int print_existing_notebooks() {

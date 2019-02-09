@@ -18,5 +18,5 @@ void quit_submenu_with_error(const char * error_string, char * buffer1, char * b
 	if (fstream != NULL)
 		fclose(*fstream);
 
-	flush_stdin();
+	getchar();
 }

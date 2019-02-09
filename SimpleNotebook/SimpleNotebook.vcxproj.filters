@@ -45,6 +45,9 @@
     <ClCompile Include="DeleteNoteDialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeleteNotebookDialog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NewEntryDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeleteNotebookDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

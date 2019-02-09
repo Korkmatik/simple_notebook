@@ -5,6 +5,7 @@
 
 static char* menu_entries[] = { 
 	"Create a new notebook", 
+	"Delete a notebook",
 	"Show all notebooks",
 	"Open an existing notebook", 
 	"Show all notes in current notebook",

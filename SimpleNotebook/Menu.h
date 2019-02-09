@@ -6,6 +6,7 @@
 // The menu
 enum order_menu_entries {
 	NEW_NOTEBOOK = 1,
+	DELETE_NOTEBOOK,
 	SHOW_NOTEBOOKS,
 	OPEN_NOTEBOOK,
 	SHOW_ALL_NOTES,

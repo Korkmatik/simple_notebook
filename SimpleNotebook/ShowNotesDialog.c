@@ -13,12 +13,14 @@ void show_notes_menu(CURRENT_NOTEBOOK *current_notebook){
 
 	printf("\nPress [ENTER] to return to menu\n");
 	flush_stdin();
+	getchar();
 }
 
 int print_all_notes(CURRENT_NOTEBOOK *current_notebook) {
 	if (!is_notebook_opened(current_notebook)) {
 		current_notebook->fstream = fopen(current_notebook->to_text, "rb");
 		if (current_notebook->fstream == NULL) {
+			flush_stdin();
 			quit_submenu_with_error("No notebook opened yet. Please open a notebook first.", NULL, NULL, NULL);
 			return -1;
 		}
@@ -28,9 +30,9 @@ int print_all_notes(CURRENT_NOTEBOOK *current_notebook) {
 	}
 
 	// Buffer for storing a note
+	unsigned line = 0;
 	size_t buffer_size = 4096;
 	char* buffer = malloc(buffer_size * sizeof(char));
-	unsigned line = 0;
 
 	// Printing note stored so far
 	printf("\nYour notes in %s:\n----------------------------------\n", current_notebook->to_text);

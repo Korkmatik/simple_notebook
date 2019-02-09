@@ -55,4 +55,5 @@ void open_notebook(CURRENT_NOTEBOOK* current_notebook) {
 	free(buffer);
 
 	printf("\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n", current_notebook->to_text);
+	getchar();
 }

@@ -8,6 +8,7 @@
 #include "ShowNotesDialog.h"
 #include "NewEntryDialog.h"
 #include "DeleteNoteDialog.h"
+#include "DeleteNotebookDialog.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,6 +57,9 @@ void handle_user_input(CURRENT_NOTEBOOK *current_notebook) {
 	case NEW_NOTEBOOK:
 		create_new_notebook(current_notebook);
 		break;
+	case DELETE_NOTEBOOK:
+		delete_notebook_dialog(current_notebook);
+		break;
 	case SHOW_NOTEBOOKS:
 		show_all_notebooks();
 		break;
@@ -76,10 +80,9 @@ void handle_user_input(CURRENT_NOTEBOOK *current_notebook) {
 		break;
 	default:
 		printf("Sorry, no such menu entry.\n\n");
+		getchar();
 		break;
 	}
-
-	flush_stdin();
 }
 
 static void quit(CURRENT_NOTEBOOK* current_notebook) {

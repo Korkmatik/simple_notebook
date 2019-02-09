@@ -54,8 +54,7 @@ void delete_note(CURRENT_NOTEBOOK * current_notebook) {
 	size_t line_buffer_size = 2048;
 	char* line_buffer = malloc(line_buffer_size);
 	if (line_buffer == NULL) {
-		quit_submenu_with_error(
-			"Error: Could not allocate memory for line_buffer",	temp_filename, NULL, &temp_file);
+		quit_submenu_with_error("Error: Could not allocate memory for line_buffer",	temp_filename, NULL, &temp_file);
 		return;
 	}
 
@@ -84,4 +83,5 @@ void delete_note(CURRENT_NOTEBOOK * current_notebook) {
 
 	printf("\nSUCCESS: Note was deleted!\nPress [ENTER] to return to menu.");
 	flush_stdin();
+	getchar();
 }
