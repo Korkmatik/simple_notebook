@@ -68,13 +68,13 @@
     <ClInclude Include="OpenNotebookDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NewEntryDialog.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="DeleteNoteDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShowNotesDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NewEntryDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
