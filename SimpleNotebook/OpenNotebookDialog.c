@@ -16,8 +16,7 @@ void open_notebook(CURRENT_NOTEBOOK* current_notebook) {
 	char user_choice = getchar();
 	flush_stdin();
 	int number_chosen_notebook = user_choice - '0' - 1;
-	if (number_chosen_notebook < 0
-		|| number_chosen_notebook > number_notebooks) {
+	if (number_chosen_notebook < 0 || number_chosen_notebook > number_notebooks) {
 		quit_submenu_with_error("No such notebook", NULL, NULL, NULL);
 		return;
 	}
@@ -55,5 +54,5 @@ void open_notebook(CURRENT_NOTEBOOK* current_notebook) {
 	strcpy(current_notebook->to_text, buffer);
 	free(buffer);
 
-	printf("\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n", buffer);
+	printf("\nSUCCESS: %s notebook was opened\nPress [ENTER] to return to menu\n\n", current_notebook->to_text);
 }
